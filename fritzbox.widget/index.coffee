@@ -65,8 +65,8 @@ render: ->
   </div>
 
   <div>
-    UP <span class="info Layer1UpstreamMaxBitRate">-</span> KiB/s
-    DOWN <span class="info Layer1DownstreamMaxBitRate">-</span> KiB/s
+    UP <span class="info Layer1UpstreamMaxBitRate">-</span> MiBit/s
+    DOWN <span class="info Layer1DownstreamMaxBitRate">-</span> MiBit/s
   </div>
 
   <div class="ErrorMsg"></div>
@@ -75,6 +75,9 @@ render: ->
 update: (xml, domEl) ->
   toKibi = (num) ->
      Math.round(num * 10 / 1024) / 10
+
+  toMebi = (num) ->
+     Math.round(num * 10 / 1024 / 1024) / 10
 
   toIEC = (num) ->
     units = ['B', 'KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB']
@@ -103,8 +106,8 @@ update: (xml, domEl) ->
   displayValue 'NewTotalBytesSent', '.TotalBytesSent', toIEC
   displayValue 'NewTotalBytesReceived', '.TotalBytesReceived', toIEC
   displayValue 'NewWANAccessType', '.WANAccessType'
-  displayValue 'NewLayer1UpstreamMaxBitRate', '.Layer1UpstreamMaxBitRate', toKibi
-  displayValue 'NewLayer1DownstreamMaxBitRate', '.Layer1DownstreamMaxBitRate', toKibi
+  displayValue 'NewLayer1UpstreamMaxBitRate', '.Layer1UpstreamMaxBitRate', toMebi
+  displayValue 'NewLayer1DownstreamMaxBitRate', '.Layer1DownstreamMaxBitRate', toMebi
   displayValue 'NewPhysicalLinkStatus', '.PhysicalLinkStatus'
   displayValue 'NewExternalIPAddress', '.ExternalIPAddress'
 
