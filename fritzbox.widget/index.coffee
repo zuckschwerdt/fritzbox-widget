@@ -6,6 +6,8 @@ proxy = 'http://127.0.0.1:41417/'
 
 # refresh cycle counter
 cycle = 0
+upstreamMaxBitRate = null
+downstreamMaxBitRate = null
 
 command: (callback) ->
   soapQuery = (endpoint, action, body) ->
@@ -87,6 +89,10 @@ update: (xml, domEl) ->
       s += 1
     (Math.round(num * 10) / 10) + " " + units[s]
 
+  getValue = (tagName) ->
+    tag = xml.getElementsByTagName(tagName)[0]
+    if tag then tag.firstChild.nodeValue else null
+
   displayValue = (tagName, target, transform) ->
     tag = xml.getElementsByTagName(tagName)[0]
     if tag
@@ -111,6 +117,23 @@ update: (xml, domEl) ->
   displayValue 'NewPhysicalLinkStatus', '.PhysicalLinkStatus'
   displayValue 'NewExternalIPAddress', '.ExternalIPAddress'
 
+  value = getValue 'NewLayer1UpstreamMaxBitRate'
+  if value
+    upstreamMaxBitRate = value
+  value = getValue 'NewLayer1DownstreamMaxBitRate'
+  if value
+    downstreamMaxBitRate = value
+
+  value = getValue 'NewByteSendRate'
+  if value and upstreamMaxBitRate
+    upstreamUtilization = Math.round(value * 5 * 8 / upstreamMaxBitRate)
+    $(domEl).find('.ByteSendRate').parent().attr('class', 'utilization-' + upstreamUtilization)
+
+  value = getValue 'NewByteReceiveRate'
+  if value and downstreamMaxBitRate
+    downstreamUtilization = Math.round(value * 5 * 8 / downstreamMaxBitRate)
+    $(domEl).find('.ByteReceiveRate').parent().attr('class', 'utilization-' + downstreamUtilization)
+
 style: """
   left: 100px
   bottom: 140px
@@ -133,5 +156,18 @@ style: """
   .info
     font-size: 24px
     font-weight: 300
+
+  .utilization-0
+    color: rgba(#fff, 0.25)
+  .utilization-1
+    color: rgba(#fff, 0.5)
+  .utilization-2
+    color: rgba(#fff, 0.75)
+  .utilization-3
+    color: rgba(#7f7, 0.75)
+  .utilization-4
+    color: rgba(#ff0, 0.75)
+  .utilization-5
+    color: rgba(#f77, 0.75)
 
 """
